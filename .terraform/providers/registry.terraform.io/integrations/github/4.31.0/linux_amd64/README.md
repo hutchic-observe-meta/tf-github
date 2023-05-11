@@ -10,8 +10,8 @@ Terraform Provider GitHub
 
 ## Requirements
 
--    [Terraform](https://www.terraform.io/downloads.html) 0.10.x
--    [Go](https://golang.org/doc/install) 1.16.x (to build the provider plugin)
+-	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
+-	[Go](https://golang.org/doc/install) 1.16.x (to build the provider plugin)
 
 ## Usage
 

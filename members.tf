@@ -1,30 +1,42 @@
 variable "members" {
-    description = "GitHub users and their roles"
-    default = {
-        "hutchic" = "member" # member of the organization or organization admin
-        "colinh-kong" = "member"
-    }
-}
-
-variable "engineering_team_members" {
-  description = "Members of the engineering team"
+  description = "GitHub users and their roles"
   default = {
-    "hutchic" = "member"
+    "hutchic"     = "member" # member of the organization or organization admin
     "colinh-kong" = "member"
   }
 }
 
-variable "integrations_team_members" {
-    description = "Members of the integrations subteam"
-    default = {
-        "hutchic" = "maintainer"
-        "colinh-kong" = "member"
+variable "parent_teams" {
+  description = "Parent team configuration"
+  default = {
+    "engineering" = {
+      "description" = "Engineering team"
+      "privacy"     = "closed"
     }
+  }
 }
 
-variable "frontend_team_members" {
-    description = "members of the frontend subteam"
-    default = {
-        "colinh-kong" = "member"
+variable "teams" {
+  description = "Team configurations"
+  default = {
+    "integrations" = {
+      "description" = "Integrations subteam"
+      "privacy"     = "closed"
+      "parent_team" = "engineering"
+      "members" = {
+        "hutchic"     = { role = "member" }
+        "colinh-kong" = { role = "member" }
+        // ... other integrations team members
+      }
     }
+    "frontend" = {
+      "description" = "Frontend subteam"
+      "privacy"     = "closed"
+      "parent_team" = "engineering"
+      "members" = {
+        "colinh-kong" = { role = "member" }
+        // ... other frontend team members
+      }
+    }
+  }
 }

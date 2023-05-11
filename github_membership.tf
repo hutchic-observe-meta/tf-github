@@ -1,48 +1,21 @@
-resource "github_membership" "members" {
+resource "github_membership" "organization_members" {
   for_each = var.members
 
   username = each.key
   role     = each.value
 }
 
-resource "github_team" "engineering" {
-  name        = "engineering"
-  description = "Engineering team"
-  privacy     = "closed"
-}
+resource "github_team_membership" "team_members" {
+  for_each = merge([
+    for team, config in var.teams : {
+      for member, member_config in config.members : "${member}:${team}" => {
+        "team" = team
+        "role" = member_config.role
+      }
+    }
+  ]...)
 
-resource "github_team_membership" "engineering_team" {
-  for_each = var.engineering_team_members
-
-  team_id  = github_team.engineering.id
-  username = each.key
-  role     = each.value
-}
-
-resource "github_team" "integrations" {
-  name        = "integrations"
-  description = "Integrations team"
-  privacy     = "closed"
-}
-
-resource "github_team_membership" "integrations_team" {
-  for_each = var.integrations_team_members
-
-  team_id  = github_team.integrations.id
-  username = each.key
-  role     = each.value
-}
-
-resource "github_team" "frontend" {
-  name        = "frontend"
-  description = "Frontend team"
-  privacy     = "closed"
-}
-
-resource "github_team_membership" "frontend_team" {
-  for_each = var.frontend_team_members
-
-  team_id  = github_team.frontend.id
-  username = each.key
-  role     = each.value
+  team_id  = github_team.teams[each.value.team].id
+  username = split(":", each.key)[0]
+  role     = each.value.role
 }
