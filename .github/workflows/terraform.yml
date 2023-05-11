@@ -64,11 +64,3 @@ jobs:
             repo: context.repo.repo,
             body: process.env.STDOUT
           })
-
-      # On push to main, build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
-      env:
-        TF_VAR_github_token: ${{ steps.generate_token.outputs.token }}
