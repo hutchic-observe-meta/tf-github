@@ -29,5 +29,3 @@ repos:
   hooks:
   - id: forbid-crlf
   - id: remove-crlf
-  - id: forbid-tabs
-  - id: remove-tabs
