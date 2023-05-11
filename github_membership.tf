@@ -19,3 +19,18 @@ resource "github_team_membership" "team_members" {
   username = split(":", each.key)[0]
   role     = each.value.role
 }
+
+resource "github_team_membership" "parent_team_members" {
+  for_each = merge([
+    for team, config in var.parent_teams : {
+      for member, member_config in config.members : "${member}:${team}" => {
+        "team" = team
+        "role" = member_config.role
+      }
+    }
+  ]...)
+
+  team_id  = github_team.parent_teams[each.value.team].id
+  username = split(":", each.key)[0]
+  role     = each.value.role
+}

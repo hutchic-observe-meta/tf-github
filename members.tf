@@ -1,7 +1,8 @@
+# Available organization roles are member or admin
 variable "members" {
   description = "GitHub users and their roles"
   default = {
-    "hutchic"     = "member" # member of the organization or organization admin
+    "hutchic"     = "member"
     "colinh-kong" = "member"
   }
 }
@@ -9,20 +10,25 @@ variable "members" {
 variable "parent_teams" {
   description = "Parent team configuration"
   default = {
-    "engineering" = {
-      "description" = "Engineering team"
+    "observe-employees" = {
+      "members" = {
+        "hutchic"     = { role = "member" }
+        "colinh-kong" = { role = "member" }
+      }
+      "description" = "observe-employees team"
       "privacy"     = "closed"
     }
   }
 }
 
+# Available team roles are member or maintainer
 variable "teams" {
   description = "Team configurations"
   default = {
     "integrations" = {
       "description" = "Integrations subteam"
       "privacy"     = "closed"
-      "parent_team" = "engineering"
+      "parent_team" = "observe-employees"
       "members" = {
         "hutchic"     = { role = "member" }
         "colinh-kong" = { role = "member" }
@@ -32,7 +38,7 @@ variable "teams" {
     "frontend" = {
       "description" = "Frontend subteam"
       "privacy"     = "closed"
-      "parent_team" = "engineering"
+      "parent_team" = "observe-employees"
       "members" = {
         "colinh-kong" = { role = "member" }
         // ... other frontend team members
