@@ -34,3 +34,24 @@ resource "github_team_membership" "parent_team_members" {
   username = split(":", each.key)[0]
   role     = each.value.role
 }
+
+# Fetch all organization members
+data "github_organization" "org_info" {
+  name = var.github_organization
+}
+
+# Define all managed organization members
+locals {
+  managed_org_members = keys(var.members)
+}
+
+# Define unmanaged organization members
+locals {
+  unmanaged_org_members = [for user in data.github_organization.org_info.users : user.login if !contains(local.managed_org_members, user.login)]
+}
+
+# Output the list of unmanaged organization members
+output "unmanaged_org_members" {
+  value       = [for member in local.unmanaged_org_members : "The member ${member} is not managed by Terraform."]
+  description = "List of organization members that exist on GitHub but are not managed by Terraform"
+}
