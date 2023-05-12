@@ -1,20 +1,12 @@
-data "github_repositories" "organization_repos" {
-  query = "org:${var.github_organization}"
-}
-
-locals {
-  unmanaged_repos = [for repo in data.github_repositories.organization_repos.names : repo if !contains(keys(var.managed_repositories), repo)]
-}
-
-resource "github_repository" "enable_security_alerts" {
+resource "github_repository" "repo" {
   for_each = var.managed_repositories
 
   name = each.key
 
-  allow_merge_commit     = false
-  allow_auto_merge       = true
-  vulnerability_alerts   = true
-  delete_branch_on_merge = true
+  allow_merge_commit     = each.value.settings.allow_merge_commit != null ? each.value.settings.allow_merge_commit : false
+  allow_auto_merge       = each.value.settings.allow_auto_merge != null ? each.value.settings.allow_auto_merge : true
+  vulnerability_alerts   = each.value.settings.vulnerability_alerts != null ? each.value.settings.vulnerability_alerts : true
+  delete_branch_on_merge = each.value.settings.delete_branch_on_merge != null ? each.value.settings.delete_branch_on_merge : true
 
   security_and_analysis {
     secret_scanning {
@@ -26,12 +18,12 @@ resource "github_repository" "enable_security_alerts" {
   }
 }
 
-data "github_team" "team" {
+resource "github_team" "team" {
   for_each = toset(flatten([
     for repo in values(var.managed_repositories) : keys(repo.teams)
   ]))
 
-  slug = each.key
+  name = each.key
 }
 
 locals {
@@ -51,9 +43,17 @@ locals {
 resource "github_team_repository" "team_repo" {
   for_each = local.team_repo_for_each
 
-  repository = each.value.repo_name
-  team_id    = data.github_team.team[each.value.team_name].id
+  repository = github_repository.repo[each.value.repo_name].name
+  team_id    = github_team.team[each.value.team_name].id
   permission = each.value.role
+}
+
+data "github_repositories" "organization_repos" {
+  query = "org:${var.github_organization}"
+}
+
+locals {
+  unmanaged_repos = [for repo in data.github_repositories.organization_repos.names : repo if !contains(keys(var.managed_repositories), repo)]
 }
 
 output "unmanaged_repos" {

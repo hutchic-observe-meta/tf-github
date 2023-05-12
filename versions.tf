@@ -4,6 +4,9 @@ terraform {
       source = "integrations/github"
     }
   }
+  backend "local" {
+    path = "terraform.tfstate"
+  }
 }
 
 provider "github" {

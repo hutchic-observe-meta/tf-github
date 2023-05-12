@@ -15,9 +15,10 @@ resource "github_team_membership" "team_members" {
     }
   ]...)
 
-  team_id  = github_team.teams[each.value.team].id
-  username = split(":", each.key)[0]
-  role     = each.value.role
+  team_id    = github_team.teams[each.value.team].id
+  username   = split(":", each.key)[0]
+  role       = each.value.role
+  depends_on = [github_team.teams, github_membership.organization_members]
 }
 
 resource "github_team_membership" "parent_team_members" {
@@ -30,9 +31,10 @@ resource "github_team_membership" "parent_team_members" {
     }
   ]...)
 
-  team_id  = github_team.parent_teams[each.value.team].id
-  username = split(":", each.key)[0]
-  role     = each.value.role
+  team_id    = github_team.parent_teams[each.value.team].id
+  username   = split(":", each.key)[0]
+  role       = each.value.role
+  depends_on = [github_team.parent_teams, github_membership.organization_members]
 }
 
 # Fetch all organization members

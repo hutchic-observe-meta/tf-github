@@ -13,6 +13,7 @@ resource "github_team" "teams" {
   description    = each.value.description
   privacy        = each.value.privacy
   parent_team_id = github_team.parent_teams[each.value.parent_team].id
+  depends_on     = [github_team.parent_teams]
 }
 
 # Get all the teams in the organization
