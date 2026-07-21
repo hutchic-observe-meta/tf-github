@@ -52,7 +52,7 @@ jobs:
 
     # Comment with plan on PR
     - name: Comment with Plan
-      uses: actions/github-script@0.9.0
+      uses: actions/github-script@v6.4.1
       if: github.event_name == 'pull_request'
       env:
         STDOUT: "```${{ steps.plan.outputs.stdout }}```"
